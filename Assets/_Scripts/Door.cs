@@ -90,7 +90,7 @@ namespace _Scripts
 	        }
 	    }
 	}
-	
+	#if UNITY_EDITOR
 	[CustomEditor(typeof(Door))] 
 	public class DoorEditor : Editor
 	{
@@ -133,4 +133,5 @@ namespace _Scripts
 			
 	    }
 	}
+#endif
 }
