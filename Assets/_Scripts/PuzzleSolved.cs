@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 namespace _Scripts
 {
@@ -6,6 +7,7 @@ namespace _Scripts
     {
         public bool isFinished = false;
         public Door doorObject;
+        public Canvas canvas;
         
         void Update()
         {
@@ -35,6 +37,9 @@ namespace _Scripts
                             element.Find("Capsule").gameObject.GetComponent<LightsOutPuzzleController>().isFinished = true;
                     
                     doorObject.isLocked = false;
+                    canvas.gameObject.SetActive(true);
+                    canvas.transform.Find("TextMain").GetComponent<TextMeshProUGUI>().text = "Udało się";
+                    canvas.transform.Find("TextSub").GetComponent<TextMeshProUGUI>().text = "Drzwi otwarte";
                 }
             }
                 

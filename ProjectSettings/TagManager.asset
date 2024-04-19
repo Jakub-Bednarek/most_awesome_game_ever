@@ -6,6 +6,7 @@ TagManager:
   tags:
   - door
   - puzzle
+  - monster
   layers:
   - Default
   - TransparentFX
@@ -14,9 +15,9 @@ TagManager:
   - Water
   - UI
   - Puzzle
-  - 
-  - 
-  - 
+  - Test
+  - Map
+  - Monster
   - 
   - 
   - 

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 [RequireComponent(typeof(CharacterController))]
 public class FPSController : MonoBehaviour
 {
@@ -12,8 +14,11 @@ public class FPSController : MonoBehaviour
     public float gravity = 10f;
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
-    public  bool canMove;
-    
+    public bool canMove;
+    public bool canTeleport = false;
+    public Canvas UI;
+    private int cooldownTeleport;
+    private int overHeatTeleport;
     private Vector3 moveDirection = Vector3.zero;
     float rotationX;
    
@@ -26,6 +31,8 @@ public class FPSController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (canTeleport) 
+            UI.transform.Find("TeleportAbility").gameObject.SetActive(true);
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -81,19 +88,31 @@ public class FPSController : MonoBehaviour
 
         #region Teleport
 
-        if (Input.GetButtonDown("Teleport") && canMove)
+        if (Input.GetButtonDown("Teleport") && canMove && canTeleport)
         {
+            cooldownTeleport = 10;
             if (firstLevel)
             { 
                 TeleportToLevel(level2);
+                playerCamera.gameObject.GetComponent<DotMatrixEffect>().on = true;
+                playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount = 200;
+                StartCoroutine(OverHeat());
             }
             else
             {
+                
                 TeleportToLevel(level1);
+                playerCamera.gameObject.GetComponent<DotMatrixEffect>().on = false;
             }
-
             firstLevel = !firstLevel;
+            StartCoroutine(CooldownTeleport());
         } 
+        #endregion
+        
+        #region Shooting
+        
+        
+        
         #endregion
     }
     void TeleportToLevel(float yPosition)
@@ -103,4 +122,39 @@ public class FPSController : MonoBehaviour
         transform.position = location;
         Physics.SyncTransforms();
     }
+    private System.Collections.IEnumerator CooldownTeleport()
+    {
+        canTeleport = false;
+        UI.transform.Find("Cooldown").gameObject.SetActive(true);
+        yield return new WaitForSeconds(1);
+        cooldownTeleport--;
+        UI.transform.Find("Cooldown").gameObject.GetComponent<TextMeshProUGUI>().text = cooldownTeleport.ToString();
+        if (cooldownTeleport > 0)
+            StartCoroutine(CooldownTeleport());
+        else
+        {
+            StopCoroutine(CooldownTeleport());
+            canTeleport = true;
+            UI.transform.Find("Cooldown").gameObject.GetComponent<TextMeshProUGUI>().text = "10";
+            UI.transform.Find("Cooldown").gameObject.SetActive(false);
+        }
+    }
+    private System.Collections.IEnumerator OverHeat()
+    {
+        yield return new WaitForSeconds(1);
+        playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount = playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount - 4;
+        if (playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount > 3 && !firstLevel)
+            StartCoroutine(OverHeat());
+        else if (playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount <= 3 && !firstLevel)
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
+        }
+        else
+            StopCoroutine(OverHeat());
+    }
+    
 }

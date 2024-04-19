@@ -12,6 +12,9 @@ namespace _Scripts
 		public bool isPin;
 		public string solution = "1234";
 		public  Canvas canvas;
+		public  Canvas storyCanvas;
+		public  string storyTextMain;
+		public  string storyTextSub;
 		private Animator _animator;
 		private readonly string _openAnimationName = "DoorOpen";
 		private readonly string _closeAnimationName = "DoorClose";
@@ -44,6 +47,13 @@ namespace _Scripts
 
 			if (isPin && isLocked)
 				EnableCanvas();
+
+			if (!isPin && isLocked)
+			{
+				storyCanvas.gameObject.SetActive(true);
+				storyCanvas.transform.Find("TextMain").GetComponent<TextMeshProUGUI>().text = storyTextMain;
+				storyCanvas.transform.Find("TextSub").GetComponent<TextMeshProUGUI>().text = storyTextSub;
+			}
 		}
 
 		private void Update()
@@ -71,6 +81,7 @@ namespace _Scripts
 		
 		public void OnButtonClick()
 	    {
+		    Debug.Log(canvas.transform.Find("InputField").gameObject.GetComponent<TMP_InputField>().text);
 	        if (canvas.transform.Find("InputField").gameObject.GetComponent<TMP_InputField>().text == solution)
 	        {
 		        isLocked = false;
@@ -100,6 +111,23 @@ namespace _Scripts
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Canvas");
 				door.canvas = (Canvas)EditorGUILayout.ObjectField(door.canvas, typeof(Canvas), true);
+				GUILayout.EndHorizontal();
+			}
+			if (door.isLocked && !door.isPin)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Story Canvas");
+				door.storyCanvas = (Canvas)EditorGUILayout.ObjectField(door.storyCanvas, typeof(Canvas), true);
+				GUILayout.EndHorizontal();
+				
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Story Canvas Text");
+				door.storyTextMain = EditorGUILayout.TextField(door.storyTextMain);
+				GUILayout.EndHorizontal();
+				
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Story Canvas Sub Text");
+				door.storyTextSub = EditorGUILayout.TextField(door.storyTextSub);
 				GUILayout.EndHorizontal();
 			}
 			

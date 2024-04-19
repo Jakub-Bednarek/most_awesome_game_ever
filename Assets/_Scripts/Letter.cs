@@ -1,17 +1,23 @@
 using UnityEngine;
+using TMPro;
 
 namespace _Scripts
 {
 	public class Letter : MonoBehaviour, IInteractable
 	{
 		public Canvas canvas;
-		private FPSController _player;
+		public string text;
+		public bool isButton = false;
+		public FPSController _player;
     
 		public void Interact(FPSController player)
 		{
-			_player = player;
+			canvas.transform.Find("LetterText").GetComponent<TextMeshProUGUI>().text = text;
 			if (!canvas.gameObject.activeSelf)
 				EnableCanvas();
+			
+			if (isButton)
+				gameObject.transform.Find("ButtonToShowTheWall").gameObject.SetActive(true);
 		}
 		public void Update()
 		{
