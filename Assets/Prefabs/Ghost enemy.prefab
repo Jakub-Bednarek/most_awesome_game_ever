@@ -97,6 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 145276d85a36f1042bc8a060c15040d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMonsterDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   speed: 3
   levitationMagnitude: 50
   levitationSpeedFactor: 4
@@ -119,5 +122,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.07, y: 0.07, z: 0.027516676}
+  m_Size: {x: 0.03, y: 0.03, z: 0.027516676}
   m_Center: {x: 0.00095888396, y: -0.00022323844, z: 0.014068228}
