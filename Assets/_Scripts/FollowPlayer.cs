@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
-    [SerializeField] GameObject player;
     [SerializeField] float speed = 0.05f;
     [SerializeField] float lifeDurationInSeconds = 5.0f;
     [SerializeField] float levitationMagnitude = 5.0f;
     [SerializeField] float levitationSpeedFactor = 5.0f;
+    private Player player;
     private float currentLifespan = 0.0f;
     private Vector3 directionToPlayer;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = FindFirstObjectByType<Player>();
     }
 
     // Update is called once per frame
