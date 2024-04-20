@@ -2,10 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
+
+public enum Level
+{
+    REALITY,
+    OTHER_REALM
+}
+
+public class LevelChangeEvent : UnityEvent<Level>
+{
+}
 
 [RequireComponent(typeof(CharacterController))]
 public class FPSController : MonoBehaviour
 {
+    static public LevelChangeEvent levelChangeEvent = new();
     public Camera playerCamera;
 
     public float walkSpeed = 6f;
@@ -16,7 +28,7 @@ public class FPSController : MonoBehaviour
     public float lookXLimit = 45f;
     public bool canMove;
     public bool canTeleport = false;
-    public Canvas UI;
+        public Canvas UI;
     private int cooldownTeleport;
     private int overHeatTeleport;
     private Vector3 moveDirection = Vector3.zero;
@@ -96,6 +108,7 @@ public class FPSController : MonoBehaviour
                 TeleportToLevel(level2);
                 playerCamera.gameObject.GetComponent<DotMatrixEffect>().on = true;
                 playerCamera.gameObject.GetComponent<DotMatrixEffect>().amount = 200;
+                levelChangeEvent.Invoke(Level.OTHER_REALM);
                 StartCoroutine(OverHeat());
             }
             else
@@ -103,6 +116,7 @@ public class FPSController : MonoBehaviour
                 
                 TeleportToLevel(level1);
                 playerCamera.gameObject.GetComponent<DotMatrixEffect>().on = false;
+                levelChangeEvent.Invoke(Level.REALITY);
             }
             firstLevel = !firstLevel;
             StartCoroutine(CooldownTeleport());

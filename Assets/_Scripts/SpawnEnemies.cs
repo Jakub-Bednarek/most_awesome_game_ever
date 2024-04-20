@@ -5,13 +5,23 @@ using UnityEngine;
 public class SpawnEnemies : MonoBehaviour
 {
     [SerializeField] List<FollowPlayer> enemiesToSpawn;
-    [SerializeField] FollowPlayer spawnedMonster = null;
-    [SerializeField] bool isMonsterSpawned = false;
     [SerializeField] float monsterSpawnChangeInPercent = 25.0f;
-    private Player player;
-    private float delay = 3.0f;
-    private float timePassed = 0.0f;
+    [SerializeField] Player player;
     [SerializeField] bool isLevelEligibleForSpawningMonsters = false;
+    private readonly float delay = 3.0f;
+    private float timePassed = 0.0f;
+    private bool isMonsterSpawned = false;
+    private FollowPlayer spawnedMonster = null;
+
+    void OnEnable()
+    {
+        FPSController.levelChangeEvent.AddListener(OnLevelChange);
+    }
+
+    void OnDisable()
+    {
+        FPSController.levelChangeEvent.RemoveListener(OnLevelChange);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -34,14 +44,14 @@ public class SpawnEnemies : MonoBehaviour
         }
     }
 
-    private void OnLevelChange(int level)
+    private void OnLevelChange(Level level)
     {
-        if(level == 0)
+        if(level == Level.REALITY)
         {
             isLevelEligibleForSpawningMonsters = false;
             ResetPropertiesOnSafeLevelChange();
         }
-        else
+        else if (level == Level.OTHER_REALM)
         {
             isLevelEligibleForSpawningMonsters = true;
         }
@@ -75,7 +85,7 @@ public class SpawnEnemies : MonoBehaviour
         float xOffset = Random.Range(8.0f, 30.0f); 
         float zOffset = Random.Range(8.0f, 30.0f); 
 
-        return player.transform.position + new Vector3(xOffset, 0.0f, zOffset);
+        return player.transform.position + new Vector3(xOffset, -2.0f, zOffset);
     }
 
     private void SpawnRandomMonster()
@@ -83,8 +93,16 @@ public class SpawnEnemies : MonoBehaviour
         if (!isMonsterSpawned)
         {
             isMonsterSpawned = true;
+
             int monsterIndexToSpawn = Random.Range(0, enemiesToSpawn.Count);
-            Instantiate(enemiesToSpawn[monsterIndexToSpawn], GenerateRandomMonsterPosition(), Quaternion.identity);
+            spawnedMonster = Instantiate(enemiesToSpawn[monsterIndexToSpawn], GenerateRandomMonsterPosition(), enemiesToSpawn[monsterIndexToSpawn].transform.rotation);
+            spawnedMonster.lifeDurationInSeconds = Random.Range(10.0f, 25.0f);
+            spawnedMonster.onMonsterDeathEvent.AddListener(ResetStateAfterMonsterDeath);
         }
+    }
+
+    private void ResetStateAfterMonsterDeath()
+    {
+        isMonsterSpawned = false;
     }
 }

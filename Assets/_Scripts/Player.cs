@@ -8,20 +8,12 @@ public class Player : MonoBehaviour
     void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("monster"))
-        {
-            Debug.Log("Holy fuckers");
+        {            
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
